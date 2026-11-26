@@ -11,6 +11,7 @@ GOOD = {"name": "Ada Lovelace", "email": "ada@example.com", "message": "Hello, I
 @pytest.fixture(autouse=True)
 def reset(monkeypatch):
     main._hits.clear()
+    main._global.clear()
     sent = []
     monkeypatch.setattr(mailer, "send_contact_email", lambda *args: sent.append(args))
     return sent
@@ -60,6 +61,29 @@ def test_rate_limit_is_per_visitor(reset):
     for _ in range(5):
         client.post("/contact", json=GOOD, headers={"x-forwarded-for": "1.1.1.1"})
     assert client.post("/contact", json=GOOD, headers={"x-forwarded-for": "2.2.2.2"}).status_code == 202
+
+
+def test_faked_forwarded_for_entries_dont_bypass_the_limit(reset):
+    # The client can put anything first; Render's proxy appends the real IP (9.9.9.9) last.
+    for i in range(5):
+        client.post("/contact", json=GOOD, headers={"x-forwarded-for": f"10.0.0.{i}, 9.9.9.9"})
+    r = client.post("/contact", json=GOOD, headers={"x-forwarded-for": "10.0.0.99, 9.9.9.9"})
+    assert r.status_code == 429
+
+
+def test_global_limit_across_all_visitors():
+    for i in range(main.GLOBAL_LIMIT):
+        assert not main.rate_limited(f"ip-{i}", now=float(i))
+    assert main.rate_limited("someone-new", now=100.0)
+    assert not main.rate_limited("someone-new", now=main.GLOBAL_WINDOW + 200.0)
+
+
+def test_memory_is_bounded(monkeypatch):
+    monkeypatch.setattr(main, "MAX_TRACKED", 50)
+    for i in range(500):
+        main.rate_limited(f"ip-{i}", now=0.0)
+        main._global.clear()  # only test the per-visitor table here
+    assert len(main._hits) <= 50
 
 
 def test_window_slides():

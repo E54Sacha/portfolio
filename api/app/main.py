@@ -3,7 +3,7 @@
 import logging
 import os
 import time
-from collections import defaultdict, deque
+from collections import OrderedDict, deque
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,8 +14,11 @@ from app import mailer
 log = logging.getLogger("portfolio-api")
 
 DEFAULT_ORIGINS = "https://portfolio-five-khaki.vercel.app,http://localhost:3000"
-RATE_LIMIT = 5  # messages
-RATE_WINDOW = 10 * 60  # seconds
+RATE_LIMIT = 5  # messages per visitor...
+RATE_WINDOW = 10 * 60  # ...per 10 minutes
+GLOBAL_LIMIT = 30  # messages from everyone together...
+GLOBAL_WINDOW = 60 * 60  # ...per hour (protects the inbox and the free Resend quota)
+MAX_TRACKED = 10_000  # visitors remembered at most (bounded memory)
 
 app = FastAPI(title="Portfolio API", docs_url=None, redoc_url=None, openapi_url=None)
 app.add_middleware(
@@ -49,25 +52,51 @@ class ContactMessage(BaseModel):
         return value.strip()
 
 
-# Very small in-memory rate limiter: fine for one free-tier instance.
-_hits: dict[str, deque[float]] = defaultdict(deque)
+# Small in-memory rate limiter: fine for one free-tier instance.
+_hits: "OrderedDict[str, deque[float]]" = OrderedDict()  # visitor IP -> times of their recent messages
+_global: deque[float] = deque()  # times of everyone's recent messages
 
 
 def client_ip(request: Request) -> str:
+    """The visitor's IP. Render's proxy appends the real client address as the LAST X-Forwarded-For
+    entry; anything before it was sent by the client and can be faked, so it's ignored."""
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
-        return forwarded.split(",")[0].strip()
+        last = forwarded.split(",")[-1].strip()
+        if last:
+            return last
     return request.client.host if request.client else "unknown"
+
+
+def _expire(times: deque[float], now: float, window: float) -> None:
+    while times and now - times[0] > window:
+        times.popleft()
 
 
 def rate_limited(ip: str, now: float | None = None) -> bool:
     now = time.monotonic() if now is None else now
-    hits = _hits[ip]
-    while hits and now - hits[0] > RATE_WINDOW:
-        hits.popleft()
-    if len(hits) >= RATE_LIMIT:
+
+    _expire(_global, now, GLOBAL_WINDOW)
+    if len(_global) >= GLOBAL_LIMIT:
         return True
+
+    hits = _hits.get(ip)
+    if hits is not None:
+        _expire(hits, now, RATE_WINDOW)
+        if len(hits) >= RATE_LIMIT:
+            return True
+    else:
+        # Bounded memory: forget visitors with no recent messages, then the least recent ones.
+        if len(_hits) >= MAX_TRACKED:
+            for key in [k for k, v in _hits.items() if not v or now - v[-1] > RATE_WINDOW]:
+                del _hits[key]
+            while len(_hits) >= MAX_TRACKED:
+                _hits.popitem(last=False)
+        hits = _hits[ip] = deque()
+
     hits.append(now)
+    _hits.move_to_end(ip)
+    _global.append(now)
     return False
 
 
