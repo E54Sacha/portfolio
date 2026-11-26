@@ -71,6 +71,21 @@ def test_faked_forwarded_for_entries_dont_bypass_the_limit(reset):
     assert r.status_code == 429
 
 
+def test_addresses_in_the_same_network_share_a_limit(reset):
+    for i in range(5):
+        client.post("/contact", json=GOOD, headers={"x-forwarded-for": f"5.6.7.{i}"})
+    assert client.post("/contact", json=GOOD, headers={"x-forwarded-for": "5.6.7.200"}).status_code == 429
+    assert client.post("/contact", json=GOOD, headers={"x-forwarded-for": "5.6.8.1"}).status_code == 202
+    assert main.visitor_key("2001:db8::1") == main.visitor_key("2001:db8::ffff")
+
+
+def test_failed_deliveries_dont_use_up_the_limits(monkeypatch):
+    monkeypatch.setattr(mailer, "send_contact_email", _raise(mailer.MailFailed("down")))
+    for _ in range(10):
+        assert client.post("/contact", json=GOOD).status_code == 502
+    assert not main._global and not any(main._hits.values())
+
+
 def test_global_limit_across_all_visitors():
     for i in range(main.GLOBAL_LIMIT):
         assert not main.rate_limited(f"ip-{i}", now=float(i))

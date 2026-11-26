@@ -1,5 +1,6 @@
 """Portfolio API: one endpoint that receives the contact form and emails it to me."""
 
+import ipaddress
 import logging
 import os
 import time
@@ -68,35 +69,58 @@ def client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def visitor_key(ip: str) -> str:
+    """Group addresses by network (IPv4 /24, IPv6 /64): one person usually controls a whole block,
+    so switching addresses inside it doesn't give them a fresh limit."""
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return ip
+    prefix = 24 if addr.version == 4 else 64
+    return str(ipaddress.ip_network(f"{addr}/{prefix}", strict=False))
+
+
 def _expire(times: deque[float], now: float, window: float) -> None:
     while times and now - times[0] > window:
         times.popleft()
 
 
-def rate_limited(ip: str, now: float | None = None) -> bool:
+def limit_reason(key: str, now: float | None = None) -> str | None:
+    """'visitor' or 'global' if a new message must be refused, else None. Doesn't record anything."""
     now = time.monotonic() if now is None else now
-
-    _expire(_global, now, GLOBAL_WINDOW)
-    if len(_global) >= GLOBAL_LIMIT:
-        return True
-
-    hits = _hits.get(ip)
+    hits = _hits.get(key)
     if hits is not None:
         _expire(hits, now, RATE_WINDOW)
         if len(hits) >= RATE_LIMIT:
-            return True
-    else:
+            return "visitor"
+    _expire(_global, now, GLOBAL_WINDOW)
+    if len(_global) >= GLOBAL_LIMIT:
+        return "global"
+    return None
+
+
+def record(key: str, now: float | None = None) -> None:
+    """Count one delivered message. Only delivered messages count, so failed attempts use up nothing."""
+    now = time.monotonic() if now is None else now
+    hits = _hits.get(key)
+    if hits is None:
         # Bounded memory: forget visitors with no recent messages, then the least recent ones.
         if len(_hits) >= MAX_TRACKED:
-            for key in [k for k, v in _hits.items() if not v or now - v[-1] > RATE_WINDOW]:
-                del _hits[key]
+            for k in [k for k, v in _hits.items() if not v or now - v[-1] > RATE_WINDOW]:
+                del _hits[k]
             while len(_hits) >= MAX_TRACKED:
                 _hits.popitem(last=False)
-        hits = _hits[ip] = deque()
-
+        hits = _hits[key] = deque()
     hits.append(now)
-    _hits.move_to_end(ip)
+    _hits.move_to_end(key)
     _global.append(now)
+
+
+def rate_limited(key: str, now: float | None = None) -> bool:
+    """Check, and record if allowed (used by the tests)."""
+    if limit_reason(key, now):
+        return True
+    record(key, now)
     return False
 
 
@@ -111,8 +135,13 @@ def contact(msg: ContactMessage, request: Request) -> dict:
     if msg.website:
         # A bot filled the honeypot: pretend it worked, send nothing.
         return {"status": "sent"}
-    if rate_limited(client_ip(request)):
+    key = visitor_key(client_ip(request))
+    reason = limit_reason(key)
+    if reason == "visitor":
         raise HTTPException(status_code=429, detail="Too many messages. Try again in a few minutes.")
+    if reason == "global":
+        log.warning("Global contact limit reached")
+        raise HTTPException(status_code=429, detail="The contact form is busy right now. Email me directly instead.")
     try:
         mailer.send_contact_email(msg.name, msg.email, msg.message)
     except mailer.MailNotConfigured:
@@ -121,4 +150,5 @@ def contact(msg: ContactMessage, request: Request) -> dict:
     except mailer.MailFailed as exc:
         log.error("Sending failed: %s", exc)
         raise HTTPException(status_code=502, detail="Your message couldn't be delivered. Try again later.")
+    record(key)
     return {"status": "sent"}
