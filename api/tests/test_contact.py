@@ -79,11 +79,36 @@ def test_addresses_in_the_same_network_share_a_limit(reset):
     assert main.visitor_key("2001:db8::1") == main.visitor_key("2001:db8::ffff")
 
 
-def test_failed_deliveries_dont_use_up_the_limits(monkeypatch):
-    monkeypatch.setattr(mailer, "send_contact_email", _raise(mailer.MailFailed("down")))
-    for _ in range(10):
+def test_failed_sends_still_count_so_retries_stay_limited(monkeypatch):
+    monkeypatch.setattr(mailer, "send_contact_email", _raise(mailer.MailFailed("timeout")))
+    for _ in range(5):
         assert client.post("/contact", json=GOOD).status_code == 502
+    assert client.post("/contact", json=GOOD).status_code == 429
+
+
+def test_unconfigured_email_gives_the_slot_back(monkeypatch):
+    monkeypatch.setattr(mailer, "send_contact_email", _raise(mailer.MailNotConfigured))
+    for _ in range(10):
+        assert client.post("/contact", json=GOOD).status_code == 503
     assert not main._global and not any(main._hits.values())
+
+
+def test_parallel_requests_cannot_exceed_the_limit(monkeypatch):
+    import threading
+    import time as t
+
+    def slow_send(*_args):
+        t.sleep(0.2)  # like a real email API call
+
+    monkeypatch.setattr(mailer, "send_contact_email", slow_send)
+    codes = []
+    threads = [threading.Thread(target=lambda: codes.append(client.post("/contact", json=GOOD).status_code)) for _ in range(12)]
+    for th in threads:
+        th.start()
+    for th in threads:
+        th.join()
+    assert codes.count(202) == main.RATE_LIMIT
+    assert codes.count(429) == 12 - main.RATE_LIMIT
 
 
 def test_global_limit_across_all_visitors():

@@ -3,6 +3,7 @@
 import ipaddress
 import logging
 import os
+import threading
 import time
 from collections import OrderedDict, deque
 
@@ -99,8 +100,30 @@ def limit_reason(key: str, now: float | None = None) -> str | None:
     return None
 
 
+_lock = threading.Lock()  # FastAPI runs requests in parallel threads
+
+
+def reserve(key: str) -> tuple[str | None, float]:
+    """Check and count a message in one atomic step, BEFORE sending, so parallel requests can't all
+    pass the check. Returns (reason, timestamp); reason is None when the message may be sent."""
+    with _lock:
+        now = time.monotonic()
+        reason = limit_reason(key, now)
+        if reason is None:
+            record(key, now)
+        return reason, now
+
+
+def release(key: str, stamp: float) -> None:
+    """Give a reserved slot back (only used when the failure is ours: email not configured)."""
+    with _lock:
+        for times in (_hits.get(key), _global):
+            if times is not None and stamp in times:
+                times.remove(stamp)
+
+
 def record(key: str, now: float | None = None) -> None:
-    """Count one delivered message. Only delivered messages count, so failed attempts use up nothing."""
+    """Count one message for this visitor and for the global limit."""
     now = time.monotonic() if now is None else now
     hits = _hits.get(key)
     if hits is None:
@@ -136,7 +159,7 @@ def contact(msg: ContactMessage, request: Request) -> dict:
         # A bot filled the honeypot: pretend it worked, send nothing.
         return {"status": "sent"}
     key = visitor_key(client_ip(request))
-    reason = limit_reason(key)
+    reason, stamp = reserve(key)
     if reason == "visitor":
         raise HTTPException(status_code=429, detail="Too many messages. Try again in a few minutes.")
     if reason == "global":
@@ -145,10 +168,11 @@ def contact(msg: ContactMessage, request: Request) -> dict:
     try:
         mailer.send_contact_email(msg.name, msg.email, msg.message)
     except mailer.MailNotConfigured:
+        release(key, stamp)  # our setup problem: don't charge the visitor for it
         log.warning("Contact message received but email isn't configured")
         raise HTTPException(status_code=503, detail="Messages can't be delivered right now. Email me directly instead.")
     except mailer.MailFailed as exc:
+        # Kept counted: a timeout may still have delivered the email, and retries must stay limited.
         log.error("Sending failed: %s", exc)
         raise HTTPException(status_code=502, detail="Your message couldn't be delivered. Try again later.")
-    record(key)
     return {"status": "sent"}
