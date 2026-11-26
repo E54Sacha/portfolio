@@ -15,6 +15,7 @@ Two ways, chosen from the environment variables (set as secrets on Render):
 
 import os
 import smtplib
+import socket
 import ssl
 from email.message import EmailMessage
 
@@ -62,6 +63,29 @@ def _body(name: str, email: str, message: str) -> str:
     return f"From: {name} <{email}>\n\n{message}"
 
 
+def connect_ipv4(host: str, port: int, timeout: float, source_address=None) -> socket.socket:
+    """Connect using IPv4 only. Some hosts (Render) have no IPv6 route, and smtp.gmail.com resolves to
+    IPv6 first, which fails with 'Network is unreachable' before IPv4 is even tried."""
+    last_error: OSError | None = None
+    for *_, sockaddr in socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM):
+        try:
+            return socket.create_connection(sockaddr[:2], timeout, source_address)
+        except OSError as exc:
+            last_error = exc
+    raise last_error or OSError(f"no IPv4 address for {host}")
+
+
+class SMTP4(smtplib.SMTP):
+    def _get_socket(self, host, port, timeout):
+        return connect_ipv4(host, port, timeout, self.source_address)
+
+
+class SMTP4_SSL(smtplib.SMTP_SSL):
+    def _get_socket(self, host, port, timeout):
+        sock = connect_ipv4(host, port, timeout, self.source_address)
+        return self.context.wrap_socket(sock, server_hostname=self._host)  # certificate checked for the real name
+
+
 def _send_smtp(name: str, email: str, message: str) -> None:
     user = os.environ["SMTP_USER"]
     msg = EmailMessage()  # refuses header values with line breaks, so nothing can be injected
@@ -76,11 +100,11 @@ def _send_smtp(name: str, email: str, message: str) -> None:
     context = ssl.create_default_context()
     try:
         if port == 465:
-            with smtplib.SMTP_SSL(host, port, timeout=TIMEOUT, context=context) as smtp:
+            with SMTP4_SSL(host, port, timeout=TIMEOUT, context=context) as smtp:
                 smtp.login(user, os.environ["SMTP_PASSWORD"])
                 smtp.send_message(msg)
         else:
-            with smtplib.SMTP(host, port, timeout=TIMEOUT) as smtp:
+            with SMTP4(host, port, timeout=TIMEOUT) as smtp:
                 smtp.starttls(context=context)
                 smtp.login(user, os.environ["SMTP_PASSWORD"])
                 smtp.send_message(msg)

@@ -1,4 +1,4 @@
-import smtplib
+import socket
 
 import pytest
 
@@ -43,8 +43,8 @@ class FakeSMTP:
 @pytest.fixture
 def fake_smtp(monkeypatch):
     FakeSMTP.sent, FakeSMTP.fail_with = [], None
-    monkeypatch.setattr(smtplib, "SMTP", FakeSMTP)
-    monkeypatch.setattr(smtplib, "SMTP_SSL", FakeSMTP)
+    monkeypatch.setattr(mailer, "SMTP4", FakeSMTP)
+    monkeypatch.setattr(mailer, "SMTP4_SSL", FakeSMTP)
     return FakeSMTP
 
 
@@ -81,3 +81,16 @@ def test_resend_is_used_when_its_key_is_set(monkeypatch, fake_smtp):
     monkeypatch.setenv("RESEND_API_KEY", "re_x")
     monkeypatch.setenv("CONTACT_TO", "me@gmail.com")
     assert mailer.method() == "resend"
+
+
+def test_connect_ipv4_asks_only_for_ipv4_addresses(monkeypatch):
+    asked = {}
+
+    def fake_getaddrinfo(host, port, family, type_):
+        asked["family"] = family
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("142.250.1.108", port))]
+
+    monkeypatch.setattr(socket, "getaddrinfo", fake_getaddrinfo)
+    monkeypatch.setattr(socket, "create_connection", lambda addr, timeout, src: ("connected", addr))
+    assert mailer.connect_ipv4("smtp.gmail.com", 587, 5) == ("connected", ("142.250.1.108", 587))
+    assert asked["family"] == socket.AF_INET
