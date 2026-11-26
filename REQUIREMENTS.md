@@ -19,8 +19,9 @@
 | 3 | A visitor can read a short About section, follow my GitHub and LinkedIn, and download my CV as a PDF | 2 h |
 | 4 | A visitor can read a "How this site is built" page with the architecture diagram and the stack | 2 h |
 | 5 | The site has a clean, distinctive design (layout, navigation, responsive on phone and desktop), with dark mode and subtle animations | 3 h + 3 h |
+| 6 | A visitor can read the whole site in English or French (/en and /fr, browser language by default, EN/FR switch remembered), added on Day 2 | 2 h |
 | | Setup, deployment, Lighthouse fixes (+20%) | 4 h |
-| | **Total** | **23 h** / 24 h budget |
+| | **Total** | **25 h** / 24 h budget (animations trimmed if needed) |
 
 ## Nice-to-have (v1.1+)
 
@@ -60,6 +61,7 @@ Each day ends on something you can demo.
 ### Day 2: Contact form and backend
 - [x] FastAPI app with a `POST /contact` endpoint: validation, honeypot field, rate limit
 - [ ] Send the message with Resend (API key as a Render secret)
+- [x] English / French versions with a language switch (scope added)
 - [x] Deploy to Render (https://portfolio-api-1lil.onrender.com); connect the form, with the "sending, the server is waking up…" state and success / error messages
 - **Demo at the end of the day:** sending the form on the live site delivers an email to my inbox.
 

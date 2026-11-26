@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { Dictionary } from "@/content/i18n";
 import { site } from "@/content/site";
 
 type Status =
@@ -12,7 +13,7 @@ type Status =
 const SLOW_AFTER_MS = 3000; // after this, explain the free server is waking up
 const TIMEOUT_MS = 70000; // a cold start can take up to about a minute
 
-export function ContactForm() {
+export function ContactForm({ t }: { t: Dictionary["contact"] }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const woke = useRef(false);
 
@@ -46,19 +47,13 @@ export function ContactForm() {
         setStatus({ kind: "sent" });
         return;
       }
-      const body = await response.json().catch(() => null);
-      const detail = typeof body?.detail === "string" ? body.detail : null;
-      setStatus({
-        kind: "error",
-        message:
-          response.status === 422
-            ? "Check the form: a valid email address and a message of at least 10 characters are needed."
-            : (detail ?? "Your message couldn't be sent. Try again in a minute."),
-      });
+      // The server answers in English; show our own text for each case, in the page language.
+      const byStatus: Record<number, string> = { 422: t.invalid, 429: t.tooMany, 503: t.unavailable, 502: t.failed };
+      setStatus({ kind: "error", message: byStatus[response.status] ?? t.failed });
     } catch {
       setStatus({
         kind: "error",
-        message: "The server didn't answer. Check your connection and try again.",
+        message: t.noAnswer,
       });
     } finally {
       clearTimeout(slowTimer);
@@ -74,16 +69,16 @@ export function ContactForm() {
     <form onSubmit={onSubmit} onFocus={wakeServer} className="grid gap-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block font-bold">
-          Your name
+          {t.name}
           <input name="name" required maxLength={100} autoComplete="name" className={field} />
         </label>
         <label className="block font-bold">
-          Your email
+          {t.email}
           <input name="email" type="email" required maxLength={254} autoComplete="email" className={field} />
         </label>
       </div>
       <label className="block font-bold">
-        Message
+        {t.message}
         <textarea name="message" required minLength={10} maxLength={5000} rows={5} className={field} />
       </label>
 
@@ -101,12 +96,11 @@ export function ContactForm() {
           disabled={sending}
           className="rounded-full bg-ultra px-8 py-3.5 font-display text-lg font-bold text-paper transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60"
         >
-          {sending ? "Sending…" : "Send message"}
+          {sending ? t.sending : t.send}
         </button>
         <p role="status" aria-live="polite" className="text-base">
-          {status.kind === "sending" && status.slow &&
-            "Sending… the server is waking up after a nap, this can take up to a minute."}
-          {status.kind === "sent" && <span className="font-bold">Message sent. Thanks, I&rsquo;ll reply by email.</span>}
+          {status.kind === "sending" && status.slow && t.waking}
+          {status.kind === "sent" && <span className="font-bold">{t.sent}</span>}
           {status.kind === "error" && <span className="font-bold text-[#8A0F3C]">{status.message}</span>}
         </p>
       </div>
