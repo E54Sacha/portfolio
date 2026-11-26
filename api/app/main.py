@@ -150,7 +150,7 @@ def rate_limited(key: str, now: float | None = None) -> bool:
 @app.get("/health")
 def health() -> dict:
     """Used by Render, and by the site to wake the server up before a message is sent."""
-    return {"status": "ok", "email": "configured" if mailer.is_configured() else "not configured"}
+    return {"status": "ok", "email": mailer.method() or "not configured"}
 
 
 @app.post("/contact", status_code=202)

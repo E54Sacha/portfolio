@@ -14,7 +14,9 @@ services:
         value: 3.12.10
       - key: ALLOWED_ORIGINS
         value: https://portfolio-five-khaki-3lwpzpubw8.vercel.app,http://localhost:3000
-      - key: RESEND_API_KEY
-        sync: false # secret: set it in the Render dashboard
-      - key: CONTACT_TO
-        sync: false # your email address: set it in the Render dashboard
+      # Email: your Gmail over SMTP (set both in the Render dashboard)
+      - key: SMTP_USER
+        sync: false # your Gmail address
+      - key: SMTP_PASSWORD
+        sync: false # a Gmail app password, never your real password
+      # Optional: CONTACT_TO (defaults to SMTP_USER), or RESEND_API_KEY + CONTACT_TO to use Resend instead
