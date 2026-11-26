@@ -55,7 +55,7 @@ Each day ends on something you can demo.
 ### Day 1: Site shell and projects
 - [x] Create the Next.js + TypeScript app, layout, navigation, base design (with `frontend-design`)
 - [x] Projects data file + project cards grid (toolkit card + 2-3 "coming soon" cards)
-- [x] Deploy to Vercel: https://portfolio-five-khaki.vercel.app
+- [x] Deploy to Vercel: https://portfolio-five-khaki-3lwpzpubw8.vercel.app
 - **Demo at the end of the day:** a live URL showing the home page and the projects grid on phone and desktop.
 
 ### Day 2: Contact form and backend

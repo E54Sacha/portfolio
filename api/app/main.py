@@ -15,7 +15,7 @@ from app import mailer
 
 log = logging.getLogger("portfolio-api")
 
-DEFAULT_ORIGINS = "https://portfolio-five-khaki.vercel.app,http://localhost:3000"
+DEFAULT_ORIGINS = "https://portfolio-five-khaki-3lwpzpubw8.vercel.app,http://localhost:3000"
 RATE_LIMIT = 5  # messages per visitor...
 RATE_WINDOW = 10 * 60  # ...per 10 minutes
 GLOBAL_LIMIT = 30  # messages from everyone together...

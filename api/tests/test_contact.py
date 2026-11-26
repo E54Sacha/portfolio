@@ -152,9 +152,9 @@ def test_resend_failure_returns_502(monkeypatch):
 
 
 def test_cors_allows_only_the_site():
-    ok = client.options("/contact", headers={"Origin": "https://portfolio-five-khaki.vercel.app", "Access-Control-Request-Method": "POST"})
+    ok = client.options("/contact", headers={"Origin": "https://portfolio-five-khaki-3lwpzpubw8.vercel.app", "Access-Control-Request-Method": "POST"})
     bad = client.options("/contact", headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "POST"})
-    assert ok.headers.get("access-control-allow-origin") == "https://portfolio-five-khaki.vercel.app"
+    assert ok.headers.get("access-control-allow-origin") == "https://portfolio-five-khaki-3lwpzpubw8.vercel.app"
     assert "access-control-allow-origin" not in bad.headers
 
 
