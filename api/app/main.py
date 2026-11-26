@@ -164,13 +164,13 @@ def contact(msg: ContactMessage, request: Request) -> dict:
         raise HTTPException(status_code=429, detail="Too many messages. Try again in a few minutes.")
     if reason == "global":
         log.warning("Global contact limit reached")
-        raise HTTPException(status_code=429, detail="The contact form is busy right now. Email me directly instead.")
+        raise HTTPException(status_code=429, detail="The contact form is busy right now. Try again later, or reach me on GitHub.")
     try:
         mailer.send_contact_email(msg.name, msg.email, msg.message)
     except mailer.MailNotConfigured:
         release(key, stamp)  # our setup problem: don't charge the visitor for it
         log.warning("Contact message received but email isn't configured")
-        raise HTTPException(status_code=503, detail="Messages can't be delivered right now. Email me directly instead.")
+        raise HTTPException(status_code=503, detail="Messages can't be delivered right now. Try again later, or reach me on GitHub.")
     except mailer.MailFailed as exc:
         # Kept counted: a timeout may still have delivered the email, and retries must stay limited.
         log.error("Sending failed: %s", exc)

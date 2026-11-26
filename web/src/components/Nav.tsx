@@ -14,6 +14,11 @@ export function Nav() {
             </a>
           </li>
           <li>
+            <a href="#contact" className="underline-offset-4 hover:underline">
+              Contact
+            </a>
+          </li>
+          <li>
             <a href={site.links.github} className="underline-offset-4 hover:underline">
               GitHub
             </a>

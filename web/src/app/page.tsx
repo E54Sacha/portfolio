@@ -1,3 +1,4 @@
+import { ContactForm } from "@/components/ContactForm";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { ProjectTile } from "@/components/ProjectTile";
@@ -22,6 +23,21 @@ export default function Home() {
             {projects.map((p) => (
               <ProjectTile key={p.number} project={p} />
             ))}
+          </div>
+        </section>
+
+        <section id="contact" aria-labelledby="contact-title" className="bg-sunflower">
+          <div className="mx-auto grid max-w-page gap-10 px-5 py-20 sm:px-8 md:grid-cols-[1fr_1.4fr] md:py-28">
+            <div>
+              <h2 id="contact-title" className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+                Get in touch
+              </h2>
+              <p className="mt-4 max-w-[28rem] text-lg leading-relaxed">
+                Internship, project, or a question about something I built? Send me a message and I&rsquo;ll reply by
+                email.
+              </p>
+            </div>
+            <ContactForm />
           </div>
         </section>
       </main>

@@ -58,9 +58,9 @@ Each day ends on something you can demo.
 - **Demo at the end of the day:** a live URL showing the home page and the projects grid on phone and desktop.
 
 ### Day 2: Contact form and backend
-- [ ] FastAPI app with a `POST /contact` endpoint: validation, honeypot field, rate limit
+- [x] FastAPI app with a `POST /contact` endpoint: validation, honeypot field, rate limit
 - [ ] Send the message with Resend (API key as a Render secret)
-- [ ] Deploy to Render; connect the form, with the "sending, the server is waking up…" state and success / error messages
+- [x] Deploy to Render (https://portfolio-api-1lil.onrender.com); connect the form, with the "sending, the server is waking up…" state and success / error messages
 - **Demo at the end of the day:** sending the form on the live site delivers an email to my inbox.
 
 ### Day 3: About, "How it's built", polish
