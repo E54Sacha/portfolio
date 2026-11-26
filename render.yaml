@@ -1,0 +1,20 @@
+# Render Blueprint: the FastAPI back end (api/). The front end (web/) is on Vercel.
+services:
+  - type: web
+    name: portfolio-api
+    runtime: python
+    plan: free
+    rootDir: api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: ALLOWED_ORIGINS
+        value: https://portfolio-five-khaki.vercel.app,http://localhost:3000
+      - key: RESEND_API_KEY
+        sync: false # secret: set it in the Render dashboard
+      - key: CONTACT_TO
+        sync: false # your email address: set it in the Render dashboard
