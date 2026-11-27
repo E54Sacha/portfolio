@@ -66,20 +66,20 @@ Each day ends on something you can demo.
 - **Demo at the end of the day:** sending the form on the live site delivers an email to my inbox.
 
 ### Day 3: About, "How it's built", polish
-- [ ] About section, GitHub / LinkedIn links, CV PDF download
-- [ ] "How this site is built" page with the architecture diagram
-- [ ] Dark mode and subtle animations
-- [ ] Lighthouse pass: fix performance, accessibility and SEO until each is 95+
+- [ ] About section, GitHub / LinkedIn links, CV PDF download (About + GitHub done; waiting for the web version of the CV and the LinkedIn profile)
+- [x] "How this site is built" page with the architecture diagram
+- [x] Dark mode and subtle animations
+- [x] Lighthouse pass: 100 / 100 / 100 / 100 (performance, accessibility, best practices, SEO) on /en, /fr and /en/how-its-built, mobile, 2026-11-27
 - **Demo at the end of the day:** the full site live, Lighthouse report at 95+.
 
 ## Definition of done
 
 Every item must be testable by someone else.
 
-- [ ] The site is live on a public Vercel URL and works on a phone and a desktop browser.
+- [x] The site is live on a public Vercel URL and works on a phone and a desktop browser.
 - [ ] Sending the contact form on the live site delivers the message to my inbox (also after the backend has been asleep).
 - [ ] The projects grid, About section, CV download and "How this site is built" page are all reachable from the navigation.
-- [ ] Lighthouse scores 95 or more for performance, accessibility and SEO on the home page.
+- [x] Lighthouse scores 95 or more for performance, accessibility and SEO on the home page.
 
 ## Risks
 
