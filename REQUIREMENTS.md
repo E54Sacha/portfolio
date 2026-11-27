@@ -60,7 +60,7 @@ Each day ends on something you can demo.
 
 ### Day 2: Contact form and backend
 - [x] FastAPI app with a `POST /contact` endpoint: validation, honeypot field, rate limit
-- [ ] Send the message with Resend (API key as a Render secret)
+- [x] Send the message with Resend (API key as a Render secret; Gmail SMTP is blocked on Render's free plan)
 - [x] English / French versions with a language switch (scope added)
 - [x] Deploy to Render (https://portfolio-api-1lil.onrender.com); connect the form, with the "sending, the server is waking up…" state and success / error messages
 - **Demo at the end of the day:** sending the form on the live site delivers an email to my inbox.
