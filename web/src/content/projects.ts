@@ -29,8 +29,8 @@ export const projects: Project[] = [
     color: "tangerine",
     tech: ["Claude Code", "Node.js", "JavaScript"],
     proof: [
-      { en: "v0.2.0 released", fr: "v0.2.0 publiée" },
-      { en: "19 automated tests", fr: "19 tests automatisés" },
+      { en: "v0.3.0 released", fr: "v0.3.0 publiée" },
+      { en: "26 automated tests", fr: "26 tests automatisés" },
     ],
     links: [
       { label: { en: "Code on GitHub", fr: "Code sur GitHub" }, href: "https://github.com/E54Sacha/claude-dev-toolkit" },
