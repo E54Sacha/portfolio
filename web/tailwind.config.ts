@@ -2,11 +2,14 @@ import type { Config } from "tailwindcss";
 
 export default {
   content: ["./src/**/*.{ts,tsx,mdx}"],
+  darkMode: "class", // the "dark" class on <html>, set by ThemeToggle / themeScript
   theme: {
     extend: {
       colors: {
         ultra: "#2E2BFF",
+        "ultra-deep": "#1D1A9E", // the blue bands in dark mode
         ink: "#1B1446",
+        night: "#0D0A26", // page background in dark mode
         paper: "#FBFBFE",
         tangerine: "#FF6A1F",
         bubblegum: "#FF4FA3",

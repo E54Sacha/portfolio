@@ -6,13 +6,20 @@
   html {
     scroll-behavior: smooth;
   }
+  html.dark {
+    color-scheme: dark; /* dark scrollbars and form controls */
+  }
   body {
-    @apply bg-paper font-body text-ink antialiased;
+    @apply bg-paper font-body text-ink antialiased dark:bg-night dark:text-paper;
   }
   :focus-visible {
     outline: 3px solid theme("colors.sunflower");
     outline-offset: 3px;
     border-radius: 6px;
+  }
+  /* A yellow outline is invisible on the yellow contact band. */
+  .on-sunflower :focus-visible {
+    outline-color: theme("colors.ink");
   }
 }
 

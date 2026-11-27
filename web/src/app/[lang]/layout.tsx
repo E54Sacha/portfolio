@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Atkinson_Hyperlegible, Bricolage_Grotesque } from "next/font/google";
 import { dictionaries, isLocale, locales } from "@/content/i18n";
 import { site } from "@/content/site";
+import { themeScript } from "@/components/theme-script";
 import "../globals.css";
 
 const display = Bricolage_Grotesque({
@@ -29,9 +30,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   if (!isLocale(lang)) return {};
   const t = dictionaries[lang].meta;
   return {
+    metadataBase: new URL(site.url), // search engines need full URLs in hreflang links
     title: `${site.name} | ${t.title}`,
     description: t.description,
-    alternates: { languages: { en: "/en", fr: "/fr" } },
+    alternates: { canonical: `/${lang}`, languages: { en: "/en", fr: "/fr", "x-default": "/en" } },
   };
 }
 
@@ -42,7 +44,11 @@ export default async function LangLayout({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   return (
-    <html lang={lang} className={`${display.variable} ${body.variable}`}>
+    // suppressHydrationWarning: themeScript may add the "dark" class before React loads.
+    <html lang={lang} className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>{children}</body>
     </html>
   );

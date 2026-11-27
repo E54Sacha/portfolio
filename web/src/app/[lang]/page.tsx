@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
+import { About } from "@/components/About";
 import { ContactForm } from "@/components/ContactForm";
+import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { ProjectTile } from "@/components/ProjectTile";
 import { dictionaries, isLocale } from "@/content/i18n";
 import { projects } from "@/content/projects";
-import { site } from "@/content/site";
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -29,7 +30,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </section>
 
-        <section id="contact" aria-labelledby="contact-title" className="bg-sunflower">
+        <About t={t.about} />
+
+        <section id="contact" aria-labelledby="contact-title" className="on-sunflower bg-sunflower text-ink">
           <div className="mx-auto grid max-w-page gap-10 px-5 py-20 sm:px-8 md:grid-cols-[1fr_1.4fr] md:py-28">
             <div>
               <h2 id="contact-title" className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -41,16 +44,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </section>
       </main>
-      <footer className="border-t-2 border-ink/10">
-        <div className="mx-auto flex max-w-page flex-wrap justify-between gap-4 px-5 py-8 text-sm sm:px-8">
-          <span>
-            © {new Date().getFullYear()} {site.name}
-          </span>
-          <a href={site.links.github} className="underline underline-offset-4">
-            {t.footer.github}
-          </a>
-        </div>
-      </footer>
+      <Footer lang={lang} t={t.nav} />
     </>
   );
 }

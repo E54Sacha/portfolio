@@ -14,7 +14,7 @@ const placement = [
 
 export function Hero({ lang, t }: { lang: Locale; t: Dictionary["hero"] }) {
   return (
-    <section id="top" className="overflow-hidden bg-ultra text-paper">
+    <section id="top" className="overflow-hidden bg-ultra text-paper dark:bg-ultra-deep">
       <div className="mx-auto grid max-w-page items-center gap-12 px-5 pb-20 pt-10 sm:px-8 md:grid-cols-[1.15fr_1fr] md:pb-28 md:pt-16">
         <div>
           <h1 className="font-display text-[clamp(2.75rem,7vw,5.25rem)] font-extrabold leading-[0.95] tracking-tight">

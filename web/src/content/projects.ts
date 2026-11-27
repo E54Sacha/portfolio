@@ -47,6 +47,7 @@ export const projects: Project[] = [
     status: "building",
     color: "mint",
     tech: ["Next.js", "TypeScript", "FastAPI"],
+    links: [{ label: { en: "How it’s built", fr: "Coulisses du site" }, href: "/how-its-built" }],
   },
   {
     number: 2,
