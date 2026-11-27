@@ -20,6 +20,13 @@ export function Footer({ lang, t }: { lang: Locale; t: Dictionary["nav"] }) {
               {t.github}
             </a>
           </li>
+          {site.links.linkedin && (
+            <li>
+              <a href={site.links.linkedin} className="underline underline-offset-4">
+                LinkedIn
+              </a>
+            </li>
+          )}
         </ul>
       </div>
     </footer>

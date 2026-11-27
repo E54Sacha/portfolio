@@ -39,7 +39,7 @@ const en = {
     title: "About me",
     bio: [
       "I’m Sacha Lévi, a third-year engineering student at EFREI Paris.",
-      "I love maths and applied physics, and I learn computer science the same way: by working on real problems. Every project on this page is one of them.",
+      "Maths and applied physics taught me to model the real world; I approach code the same way, by tackling real problems. Every project here solves one.",
     ],
     cv: "Download my CV (PDF)",
     cvSoon: "CV coming soon",
@@ -143,8 +143,8 @@ const fr: Dictionary = {
   about: {
     title: "À propos",
     bio: [
-      "Je suis Sacha Lévi, étudiant en troisième année d’école d’ingénieurs à l’EFREI Paris.",
-      "J’adore les maths et la physique appliquée, et j’apprends l’informatique de la même façon : en travaillant sur de vrais problèmes. Chaque projet de cette page en est un.",
+      "Je suis Sacha Lévi, élève ingénieur en 3e année à l’EFREI Paris.",
+      "Les maths et la physique appliquée m’ont appris à modéliser le réel ; j’aborde le code de la même façon, face à de vrais problèmes. Chaque projet ici en résout un.",
     ],
     cv: "Télécharger mon CV (PDF)",
     cvSoon: "CV bientôt disponible",

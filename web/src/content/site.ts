@@ -7,12 +7,11 @@ export const site = {
   apiUrl: "https://portfolio-api-1lil.onrender.com",
   links: {
     github: "https://github.com/E54Sacha",
-    // Empty = not shown. Add the URL once the profile exists.
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/sacha-levi-0a11332b5",
   },
   cv: {
-    href: "/cv.pdf", // the file goes in web/public/cv.pdf
-    // Set to true once web/public/cv.pdf is the web version of the CV (no phone number or date of birth).
-    ready: false,
+    // web/public/CV-Sacha-Levi.pdf: the web version, without phone number or date of birth
+    href: "/CV-Sacha-Levi.pdf",
+    ready: true,
   },
 };
