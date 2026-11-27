@@ -59,8 +59,10 @@ export default async function HowItsBuilt({ params }: { params: Promise<{ lang: 
               // On wide screens each <li> "disappears" so its card and arrow sit in the shared grid (equal card widths).
               <li key={step.name} className="flex flex-col xl:contents">
                 <div
-                  className={`animate-drop rounded-[1.4rem] p-5 text-ink shadow-[0_14px_0_-6px_rgba(27,20,70,0.3)] ${tileBg[look[i].color]}`}
-                  style={{ "--r": look[i].r, animationDelay: `${100 + i * 120}ms` } as React.CSSProperties}
+                  // Stacked cards stay narrow and straight; the tilt only shows in the one-row layout,
+                  // where the cards are small (a wide tilted card looks crooked, not playful).
+                  className={`animate-drop max-w-sm rounded-[1.4rem] p-5 text-ink shadow-[0_14px_0_-6px_rgba(27,20,70,0.3)] [--r:0deg] xl:max-w-none xl:[--r:var(--tilt)] ${tileBg[look[i].color]}`}
+                  style={{ "--tilt": look[i].r, animationDelay: `${100 + i * 120}ms` } as React.CSSProperties}
                 >
                   <span className="font-display text-3xl font-extrabold leading-none">{i + 1}</span>
                   <p className="mt-3 font-display text-xl font-extrabold leading-tight">{step.name}</p>
