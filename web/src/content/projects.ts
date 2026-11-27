@@ -60,12 +60,20 @@ export const projects: Project[] = [
     number: 2,
     title: { en: "Habit tracker", fr: "Suivi d’habitudes" },
     pitch: {
-      en: "A full-stack habit tracker with accounts, a PostgreSQL database, Docker and automatic deploys.",
-      fr: "Une application complète de suivi d’habitudes, avec comptes, base PostgreSQL, Docker et déploiement automatique.",
+      en: "A habit tracker with accounts, streaks and a one-click guest demo, deployed automatically once its tests pass.",
+      fr: "Un suivi d’habitudes avec comptes, séries de jours et démo invité en un clic, déployé automatiquement quand les tests passent.",
     },
-    status: "planned",
+    status: "live",
     color: "bubblegum",
-    tech: ["PostgreSQL", "Docker", "CI/CD"],
+    tech: ["Next.js", "FastAPI", "PostgreSQL", "Docker", "GitHub Actions"],
+    proof: [
+      { en: "34 API tests, 100% coverage", fr: "34 tests d’API, 100 % de couverture" },
+      { en: "End-to-end test in CI", fr: "Test de bout en bout en CI" },
+    ],
+    links: [
+      { label: { en: "Try the live demo", fr: "Essayer la démo" }, href: "https://habit-tracker-zeta-sooty.vercel.app" },
+      { label: { en: "Code on GitHub", fr: "Code sur GitHub" }, href: "https://github.com/E54Sacha/habit-tracker" },
+    ],
   },
   {
     number: 3,
