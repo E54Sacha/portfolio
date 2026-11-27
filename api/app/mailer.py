@@ -9,8 +9,9 @@ Two ways, chosen from the environment variables (set as secrets on Render):
    - SMTP_HOST / SMTP_PORT: optional, default smtp.gmail.com / 587
    - CONTACT_TO: optional, defaults to SMTP_USER (you send the message to yourself)
 
-2. Resend (used instead if RESEND_API_KEY is set):
-   - RESEND_API_KEY, CONTACT_TO, optional CONTACT_FROM
+2. Resend (used instead if RESEND_API_KEY is set). Needed on Render's free plan, which blocks outgoing SMTP;
+   Resend is reached over HTTPS and still delivers to your own inbox:
+   - RESEND_API_KEY, CONTACT_TO (the address you signed up to Resend with), optional CONTACT_FROM
 """
 
 import os
@@ -130,4 +131,5 @@ def _send_resend(name: str, email: str, message: str) -> None:
     except httpx.HTTPError as exc:
         raise MailFailed(str(exc)) from exc
     if response.status_code >= 300:
-        raise MailFailed(f"Resend answered {response.status_code}")
+        # Resend explains the problem in the body (e.g. "you can only send testing emails to your own address")
+        raise MailFailed(f"Resend answered {response.status_code}: {response.text[:300]}")

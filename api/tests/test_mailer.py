@@ -83,6 +83,25 @@ def test_resend_is_used_when_its_key_is_set(monkeypatch, fake_smtp):
     assert mailer.method() == "resend"
 
 
+def test_resend_sends_to_you_and_explains_refusals(monkeypatch):
+    import httpx
+
+    monkeypatch.setenv("RESEND_API_KEY", "re_x")
+    monkeypatch.setenv("CONTACT_TO", "me@gmail.com")
+    calls = []
+
+    def fake_post(url, json, headers, timeout):
+        calls.append(json)
+        return httpx.Response(calls_status.pop(0), text='{"message":"only your own address"}')
+
+    calls_status = [200, 403]
+    monkeypatch.setattr(mailer.httpx, "post", fake_post)
+    mailer.send_contact_email("Ada", "ada@example.com", "Hello there, nice site")
+    assert calls[0]["to"] == ["me@gmail.com"] and calls[0]["reply_to"] == "ada@example.com"
+    with pytest.raises(mailer.MailFailed, match="403.*only your own address"):
+        mailer.send_contact_email("Ada", "ada@example.com", "Hello there, nice site")
+
+
 def test_connect_ipv4_asks_only_for_ipv4_addresses(monkeypatch):
     asked = {}
 

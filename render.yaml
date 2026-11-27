@@ -14,9 +14,9 @@ services:
         value: 3.12.10
       - key: ALLOWED_ORIGINS
         value: https://portfolio-five-khaki-3lwpzpubw8.vercel.app,http://localhost:3000
-      # Email: your Gmail over SMTP (set both in the Render dashboard)
-      - key: SMTP_USER
-        sync: false # your Gmail address
-      - key: SMTP_PASSWORD
-        sync: false # a Gmail app password, never your real password
-      # Optional: CONTACT_TO (defaults to SMTP_USER), or RESEND_API_KEY + CONTACT_TO to use Resend instead
+      # Email: Resend over HTTPS (the free plan blocks outgoing SMTP). Set both in the Render dashboard.
+      - key: RESEND_API_KEY
+        sync: false # from resend.com > API Keys
+      - key: CONTACT_TO
+        sync: false # the address you signed up to Resend with; messages arrive there
+      # SMTP_USER + SMTP_PASSWORD (Gmail app password) also work, but only on a paid plan; Resend wins if both are set
