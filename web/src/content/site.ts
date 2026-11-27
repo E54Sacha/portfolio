@@ -9,6 +9,7 @@ export const site = {
   apiUrl: "https://portfolio-api-1lil.onrender.com",
   links: {
     github: "https://github.com/E54Sacha",
+    repo: "https://github.com/E54Sacha/portfolio",
     linkedin: "https://www.linkedin.com/in/sacha-levi-0a11332b5",
   },
   // One CV per language, in web/public/ (web versions: no phone number or date of birth).

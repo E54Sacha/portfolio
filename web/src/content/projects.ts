@@ -44,10 +44,17 @@ export const projects: Project[] = [
       en: "The site you're on: a Next.js front end with a small FastAPI back end for the contact form.",
       fr: "Le site que vous visitez : un front-end Next.js et un petit back-end FastAPI pour le formulaire de contact.",
     },
-    status: "building",
+    status: "live",
     color: "mint",
     tech: ["Next.js", "TypeScript", "FastAPI"],
-    links: [{ label: { en: "How it’s built", fr: "Coulisses du site" }, href: "/how-its-built" }],
+    proof: [
+      { en: "Lighthouse 100 / 100", fr: "Lighthouse 100 / 100" },
+      { en: "29 API tests", fr: "29 tests d’API" },
+    ],
+    links: [
+      { label: { en: "Code on GitHub", fr: "Code sur GitHub" }, href: "https://github.com/E54Sacha/portfolio" },
+      { label: { en: "How it’s built", fr: "Coulisses du site" }, href: "/how-its-built" },
+    ],
   },
   {
     number: 2,

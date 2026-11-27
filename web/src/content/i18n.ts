@@ -87,7 +87,8 @@ const en = {
         text: "Each page exists in English and French. Your first visit follows your browser’s language, and the switch in the menu is remembered.",
       },
     ],
-    code: "The code is in a private repository for now. Ask me if you’d like a walkthrough.",
+    code: "All the code, front end and API, is open on GitHub.",
+    codeLink: "Read the code",
   },
   contact: {
     title: "Get in touch",
@@ -192,7 +193,8 @@ const fr: Dictionary = {
         text: "Chaque page existe en anglais et en français. La première visite suit la langue de votre navigateur, et le choix fait dans le menu est mémorisé.",
       },
     ],
-    code: "Le code est pour l’instant dans un dépôt privé. Demandez-moi si vous voulez une présentation.",
+    code: "Tout le code, front-end et API, est public sur GitHub.",
+    codeLink: "Voir le code",
   },
   contact: {
     title: "Me contacter",

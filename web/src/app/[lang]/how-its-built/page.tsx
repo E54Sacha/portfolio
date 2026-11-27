@@ -114,8 +114,8 @@ export default async function HowItsBuilt({ params }: { params: Promise<{ lang: 
           </div>
           <p className="mt-14 max-w-[38rem] text-lg leading-relaxed">
             {t.code}{" "}
-            <a href={`/${lang}#contact`} className="font-bold underline decoration-2 underline-offset-4">
-              {all.nav.contact}
+            <a href={site.links.repo} className="font-bold underline decoration-2 underline-offset-4">
+              {t.codeLink}
             </a>
           </p>
         </section>

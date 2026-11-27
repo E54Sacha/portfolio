@@ -77,7 +77,7 @@ Each day ends on something you can demo.
 Every item must be testable by someone else.
 
 - [x] The site is live on a public Vercel URL and works on a phone and a desktop browser.
-- [ ] Sending the contact form on the live site delivers the message to my inbox (also after the backend has been asleep).
+- [x] Sending the contact form on the live site delivers the message to my inbox (also after the backend has been asleep).
 - [x] The projects grid, About section, CV download and "How this site is built" page are all reachable from the navigation.
 - [x] Lighthouse scores 95 or more for performance, accessibility and SEO on the home page.
 
