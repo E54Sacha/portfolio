@@ -1,9 +1,9 @@
-import type { Dictionary } from "@/content/i18n";
+import type { Dictionary, Locale } from "@/content/i18n";
 import { site } from "@/content/site";
 
 const pill = "rounded-full px-6 py-3 font-display text-lg font-bold";
 
-export function About({ t }: { t: Dictionary["about"] }) {
+export function About({ lang, t }: { lang: Locale; t: Dictionary["about"] }) {
   return (
     <section id="about" aria-labelledby="about-title" className="bg-lilac text-ink dark:bg-ink dark:text-paper">
       <div className="mx-auto grid max-w-page gap-8 px-5 py-20 sm:px-8 md:grid-cols-[1fr_1.4fr] md:py-28">
@@ -17,8 +17,8 @@ export function About({ t }: { t: Dictionary["about"] }) {
             </p>
           ))}
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            {site.cv.ready ? (
-              <a href={site.cv.href} download className={`${pill} bg-ultra text-paper transition-transform hover:-translate-y-0.5`}>
+            {site.cv[lang] ? (
+              <a href={site.cv[lang]} download className={`${pill} bg-ultra text-paper transition-transform hover:-translate-y-0.5`}>
                 {t.cv}
               </a>
             ) : (

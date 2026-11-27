@@ -30,7 +30,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </section>
 
-        <About t={t.about} />
+        <About lang={lang} t={t.about} />
 
         <section id="contact" aria-labelledby="contact-title" className="on-sunflower bg-sunflower text-ink">
           <div className="mx-auto grid max-w-page gap-10 px-5 py-20 sm:px-8 md:grid-cols-[1fr_1.4fr] md:py-28">
