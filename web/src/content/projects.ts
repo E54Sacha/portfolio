@@ -29,7 +29,7 @@ export const projects: Project[] = [
     color: "tangerine",
     tech: ["Claude Code", "Node.js", "JavaScript"],
     proof: [
-      { en: "v0.1.0 released", fr: "v0.1.0 publiée" },
+      { en: "v0.2.0 released", fr: "v0.2.0 publiée" },
       { en: "19 automated tests", fr: "19 tests automatisés" },
     ],
     links: [
