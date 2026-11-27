@@ -88,10 +88,10 @@ REQUIREMENTS.md                the scope and day-by-day plan this was built from
 
 ## What I learned
 
-- **CORS:** the browser, not the server, blocks a page from reading another site's answers; one wrong origin in the settings would have broken the form while it still worked with curl. <!-- TODO: check this is true for you -->
-- **Rate limiting is easy to get wrong:** spoofed `X-Forwarded-For` headers, memory that grows forever and parallel requests slipping past the check each needed a fix. <!-- TODO: check this is true for you -->
-- **Free hosting shapes the design:** the API sleeps when idle (so the form wakes it early and says so), and outgoing SMTP is blocked (so email goes through an HTTPS API). <!-- TODO: check this is true for you -->
-- **Static pages plus a little server code:** every page is static HTML, and only the language redirect and the contact form need a server. <!-- TODO: check this is true for you -->
+- **CORS:** the browser, not the server, blocks a page from reading another site's answers; one wrong origin in the settings would have broken the form while it still worked with curl.
+- **Rate limiting is easy to get wrong:** spoofed `X-Forwarded-For` headers, memory that grows forever and parallel requests slipping past the check each needed a fix.
+- **Free hosting shapes the design:** the API sleeps when idle (so the form wakes it early and says so), and outgoing SMTP is blocked (so email goes through an HTTPS API).
+- **Static pages plus a little server code:** every page is static HTML, and only the language redirect and the contact form need a server.
 
 ## What I'd do differently
 
